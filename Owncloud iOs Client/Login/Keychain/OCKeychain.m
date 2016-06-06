@@ -35,9 +35,9 @@
     [keychainItem setObject:userName forKey:(__bridge id)kSecAttrDescription];
     [keychainItem setObject:[UtilsUrls getFullBundleSecurityGroup] forKey:(__bridge id)kSecAttrAccessGroup];
 
-    
+    NSLog(@"(FUCK THIS SHIT)Error Code: %@", [UtilsUrls getFullBundleSecurityGroup]);
     OSStatus stsExist = SecItemCopyMatching((__bridge CFDictionaryRef)keychainItem, NULL);
-    
+     NSLog(@"(FUCK THIS SHIT2)Error Code: %d", (int)stsExist);
     if(stsExist == errSecSuccess) {
         NSLog(@"Unable add item with id =%@ error",idUser);
     }else {
@@ -75,7 +75,7 @@
     DLog(@"keychainItem: %@", keychainItem);
     
     OSStatus stsExist = SecItemCopyMatching((__bridge CFDictionaryRef)keychainItem, (CFTypeRef *)&result);
-    
+    DLog(@"keychainItem2: %@", result);
     DLog(@"(getCredentials)Error Code %d", (int)stsExist);
     
     if (stsExist != errSecSuccess) {
