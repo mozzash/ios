@@ -17,21 +17,24 @@ import UIKit
 
 class Managers: NSObject {
     
-    //MARK: FMDataBase
-    class var sharedDatabase: FMDatabaseQueue {
-        struct Static {
-            static var sharedDatabase: FMDatabaseQueue?
-            static var tokenDatabase: dispatch_once_t = 0
-        }
-        
-        dispatch_once(&Static.tokenDatabase) {
+    private static var __once1: () = {
+            Static.sharedOCCommunication = OCCommunication()
+        }()
+    
+    private static var __once: () = {
             Static.sharedDatabase = FMDatabaseQueue()
             
             let documentsDir = UtilsUrls.getOwnCloudFilePath()
-            let dbPath = documentsDir.stringByAppendingString("DB.sqlite")
+            let dbPath = documentsDir! + "DB.sqlite"
             
             Static.sharedDatabase = FMDatabaseQueue(path: dbPath, flags: SQLITE_OPEN_CREATE|SQLITE_OPEN_READWRITE|SQLITE_OPEN_FILEPROTECTION_NONE)
-        }
+        }()
+    
+    //MARK: FMDataBase
+    class var sharedDatabase: FMDatabaseQueue {
+        
+        
+        _ = Managers.__once
         
         return Static.sharedDatabase!
     }
@@ -41,14 +44,18 @@ class Managers: NSObject {
     class var sharedOCCommunication: OCCommunication {
         struct Static {
             static var sharedOCCommunication: OCCommunication?
-            static var tokenCommunication: dispatch_once_t = 0
+            static var tokenCommunication: Int = 0
         }
         
-        dispatch_once(&Static.tokenCommunication) {
-            Static.sharedOCCommunication = OCCommunication()
-        }
+        _ = Managers.__once1
         
         return Static.sharedOCCommunication!
+    }
+    
+    struct Static {
+        static var sharedDatabase: FMDatabaseQueue?
+        static var sharedOCCommunication: OCCommunication?
+        static var tokenDatabase: Int = 0
     }
 }
 
